@@ -1,0 +1,85 @@
+<!DOCTYPE HTML> 
+<html>
+	<head>
+		<title>
+			RPGStuck DM Helper
+		</title>
+		<style>
+			.currentHP {
+				width: 40px;
+			}
+			
+			.smallBox {
+				width: 50px;
+			}
+			
+			.redText {
+				color: red;
+			}
+			
+			#prototypeCount {
+				width: 32px;
+			}
+			
+			#nameBox {
+				width: 300px;
+			}
+			
+			#variantMobSpan {
+				font-size: 90%;
+			}
+			
+			@media only screen and (max-device-width: 480px) {
+				#nameBox {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Combat Helper</h2>
+		<input type="text" id="nameBox" placeholder="Name (to keep track if using multiple tabs)"><br/><br/>
+		<select id="monsterSelect">
+		</select>
+		<input id="generateButton" type="button" value="Generate"/>
+		<input id="clearButton" type="button" value="Clear"/>
+		<input id="enableVariantMobsCheckbox" type="checkbox"/><span id="variantMobSpan"> Allow Variant Mobs</span>
+		<br/>
+		<select id="prototypeSelect">
+			<option value="0" selected>No Prototype Data</option>
+			<option value="1">Add Prototype Numbers</option>
+			<option value="2">C4S3 Prototypes</option>
+			<option value="3">C4S11 Prototypes</option>
+		</select>
+		<span id="prototypeCountSpan">
+			# of Protos: 
+			<input type="number" id="prototypeCount" min="2" max="12"/>
+		</span>
+		<p id="outputBox"></p>
+		<br/>
+		<input id="gristButton" type="button" value="Roll Grist" />
+		<p id="gristBox"></p>
+		<br/>
+		<br/>
+		Limited Dice Roller:
+		<br/>
+		<input id="diceCountNumBox" min="1" value="1" type="number" class="smallBox"/>
+		D
+		<input id="diceSizeNumBox" min="1" value="20" type="number" class="smallBox"/>
+		+
+		<input id="diceModNumBox" value="0" type="number" class="smallBox"/>
+		<input id="diceRollButton" type="button" value="Roll"/>
+		<p id="diceResult"></p>
+		<br/>
+		<h4>
+		Other Links: (Opens in new tab)<br/>
+		<a target="_blank" href="https://docs.google.com/document/d/1d7Zz7dHuoEAp5-2JNCkvMnY6OcIGw5UKzPfuPdXP2Gc/edit">Monster Manual</a><br/>
+		<a target="_blank" href="https://docs.google.com/document/d/1zfIuxFmrjKHAA2b0Jj7o2f0wAwz7Uv6CIo_zC35PIvs/edit">Teal PHB</a><br/>
+		<a target="_blank" href="https://docs.google.com/document/d/1XhCqrwazNap_I-hrEeMnqM6QPEH3e8YYnKnviQyU_mo/edit">Weapons</a><br/>
+		<a target="_blank" href="https://docs.google.com/document/d/1ncMbV0RalmeAprA4gZeGRkCLLwysH2dV0--NNTamB-Q/edit">Pillars and Paths</a><br/>
+		<a target="_blank" href="https://docs.google.com/document/d/1o5YclplopcOt2RxWxufw5s_ZfPIajFT6UVyVS8UjbDE/edit">Psionics</a><br/>
+		</h4>
+		<script type="text/javascript" src="logic.js"></script>
+	</body>
+	
+</html>
