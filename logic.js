@@ -53,9 +53,16 @@
 			var hecatoncheries = new Mob("Hecatoncheires", new DiceInfo(12, 40, 60), new DiceInfo(20, 1, 4), 8, 16, 4);
 			var lichQueen = new Mob("Lich Queen", new DiceInfo(10, 40, 50), new DiceInfo(20, 1, 3), 9, 17, 4);
 			
+			//Soro's Monsters
+			var kobold = new Mob("Kobold", new DiceInfo(4,4,-3), new DiceInfo(20,1,3), 1, 13, 0)
+			var araneola = new Mob("Araneola", new DiceInfo(2,4,-3), new DiceInfo(20, 1, 2), 1, 14, 0)
+			var caveCrawler = new Mob("Cave Crawler", new DiceInfo(8,3,6), new DiceInfo(20,1,3), 2, 13, 1)
+			var alkali = new Mob("Alkali", new DiceInfo(6,7,14), new DiceInfo(20,1,4), 4, 15, 2)
+			
+			var mobTemplatesInUse = [];
 			
 			//The mobs that can be rolled.
-			var mobTemplates = [
+			var baseMobTemplates = [
 				[imp, rustImp, caulkImp, amberImp, shaleImp, chalkImp, aquamarineImp],
 				[ogre, obsidianOgre, cobaltOgre, jetOgre, marbleOgre],
 				[basilisk, electrumBasilisk, sapphireBasilisk, fluoriteBasilisk, graniteBasilisk],
@@ -66,6 +73,15 @@
 				[hecatoncheries],
 				[lichQueen]
 			];
+			
+			var soroMobTemplates = [
+				[kobold],
+				[araneola],
+				[caveCrawler],
+				[alkali]
+			];
+			
+			var mobTemplatesRollingId = 0;
 			
 			//Active mobs that have been instanciated.
 			var rolledMobs = [];
@@ -126,7 +142,7 @@
 				return false;
 			}
 			
-			//creates a uuid
+			//creates a uuid. Shamelessly copied off the internet.
 			function uuidv4() {
 				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))
 			}
@@ -141,8 +157,44 @@
 			//End 3rd-party helper functions
 			
 			//Is run once everything is in place, populating the monster drop-down list with all mobTemplates that have been instanciated.
-			function populateDropdown(item, index) {
-				monsterSelect.innerHTML += "<option value=\"" + index + "\">" + item[0].Name + "</option>";
+			function addToDropdown(item, index) {
+				monsterSelect.innerHTML += "<option value=\"" + mobTemplatesRollingId + "\">" + item[0].Name + "</option>";
+				mobTemplatesRollingId++;
+			}
+			
+			function clearMobDropdown() {
+				monsterSelect.innerHTML = "";
+				mobTemplatesRollingId = 0;
+				mobTemplatesInUse = [];
+			}
+			
+			function addDisabled(disabledText) {
+				monsterSelect.innerHTML += "<option disabled>" + disabledText + "</option>";
+			}
+			
+			function addSeperator() {
+				addDisabled("-------------------");
+			}
+			
+			function populateMobsDropdown() {
+				
+				//Clear any mobs here
+				clearMobDropdown();
+				mobTemplatesInUse = mobTemplatesInUse.concat(baseMobTemplates);
+				
+				//Populate the Dropdown with all mobs in use.
+				baseMobTemplates.forEach(addToDropdown);
+				
+				//Check if Soro is permitted. If so, add his mobs.
+				var soroEnabled = document.getElementById("enableSoroMobsCheckbox").checked;
+				if (soroEnabled) {
+					mobTemplatesInUse = mobTemplatesInUse.concat(soroMobTemplates)
+					addSeperator();
+					addDisabled("Soro's Mobs")
+					addSeperator();
+					soroMobTemplates.forEach(addToDropdown)
+				}
+			
 			}
 			
 			function rollDice(diceInfo) {
@@ -238,6 +290,7 @@
 						},
 						function (mob) {
 							mob.Initiative = mob.Initiative + 1;
+							mob.AC = mob.AC + 1;
 							mob.Name = "Wrinkled " + mob.Name;
 						},
 						function (mob) {
@@ -298,12 +351,11 @@
 			
 			//Rolls a mob based on template, printing its info to the page.
 			function rollMob() {
-				var mobVariants = mobTemplates[monsterSelect.value];
+				var mobVariants = mobTemplatesInUse[monsterSelect.value];
 				var variantToMake = chooseVariant(mobVariants);
 				
 				//Create a copy of the given mob template to fill out.
 				var mob = Object.create(mobVariants[variantToMake]);
-				
 				//Create a unique identifier for the sake of lookup from the page.
 				mob.ID = uuidv4();
 				
@@ -455,15 +507,18 @@
 				document.getElementById("diceResult").innerHTML = diceCount + "d" + diceSize + "+" + diceMod + " = " + '<span class="redText">' + result + '</span>';
 			}
 			
+			
+			
 			//Elements that shouldn't have to be relocated every time they're needed.
 			monsterSelect = document.getElementById("monsterSelect");
 			protoTypeOptions = document.getElementById("prototypeSelect");
 			
 			function onPageLoad() {
 				//Now that everything is ready, populate the mob dropdown...
-				mobTemplates.forEach(populateDropdown);
+				populateMobsDropdown();
 				
 				//Bind the buttons...
+				document.getElementById("enableSoroMobsCheckbox").onclick = populateMobsDropdown;
 				document.getElementById("diceRollButton").onclick = userRollDice;
 				document.getElementById("generateButton").onclick = createMobInstance;
 				document.getElementById("gristButton").onclick = rollGrist;
@@ -473,6 +528,7 @@
 					document.getElementById("prototypeCountSpan").style.visibility = 'visible';
 					rolledMobs = [];
 				}
+
 				
 				//Make prototype settings consistent...
 				protoTypeOptions.onchange = function () {
