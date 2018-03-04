@@ -22,6 +22,10 @@
 			
 			//Definine Mobs (Name, HP Dice, Initiative Dice, Tier, AC, Proficiency).
 			
+			//-----------------------------------
+			//   BASE MONSTERS (T6-9 UPDATE)
+			//-----------------------------------
+			
 			//Imp and variants
 			var imp = new Mob("Imp", new DiceInfo(4, 5, -2), new DiceInfo(20, 1, 2), 1, 12, 0);
 			var rustImp = new Mob("Rust Imp", new DiceInfo(4, 5, 10), new DiceInfo(20, 1, 2), 1, 12, 1);
@@ -53,11 +57,20 @@
 			var hecatoncheries = new Mob("Hecatoncheires", new DiceInfo(12, 40, 60), new DiceInfo(20, 1, 4), 8, 16, 4);
 			var lichQueen = new Mob("Lich Queen", new DiceInfo(10, 40, 50), new DiceInfo(20, 1, 3), 9, 17, 4);
 			
-			//Soro's Monsters
+			//----------------------
+			//   SORO'S MONSTERS 
+			//----------------------
+			
 			var kobold = new Mob("Kobold", new DiceInfo(4,4,-3), new DiceInfo(20,1,3), 1, 13, 0)
 			var araneola = new Mob("Araneola", new DiceInfo(2,4,-3), new DiceInfo(20, 1, 2), 1, 14, 0)
 			var caveCrawler = new Mob("Cave Crawler", new DiceInfo(8,3,6), new DiceInfo(20,1,3), 2, 13, 1)
 			var alkali = new Mob("Alkali", new DiceInfo(6,7,14), new DiceInfo(20,1,4), 4, 15, 2)
+			
+			//----------------------
+			//   GALAYIS MONSTERS 
+			//----------------------
+
+			//End Monsters
 			
 			var mobTemplatesInUse = [];
 			
@@ -79,6 +92,11 @@
 				[araneola],
 				[caveCrawler],
 				[alkali]
+			];
+			
+			//Temporary variable to allow for easier data entry by others.
+			var galayisMobTemplates = [
+				[imp]
 			];
 			
 			var mobTemplatesRollingId = 0;
@@ -158,7 +176,7 @@
 			
 			//Is run once everything is in place, populating the monster drop-down list with all mobTemplates that have been instanciated.
 			function addToDropdown(item, index) {
-				monsterSelect.innerHTML += "<option value=\"" + mobTemplatesRollingId + "\">" + item[0].Name + "</option>";
+				monsterSelect.innerHTML += "<option value=\"" + mobTemplatesRollingId + "\">" + item[0].Name + " - T" + item[0].Tier + "</option>";
 				mobTemplatesRollingId++;
 			}
 			
@@ -180,10 +198,16 @@
 				
 				//Clear any mobs here
 				clearMobDropdown();
-				mobTemplatesInUse = mobTemplatesInUse.concat(baseMobTemplates);
 				
-				//Populate the Dropdown with all mobs in use.
-				baseMobTemplates.forEach(addToDropdown);
+				//Check if Base mobs are permitted. If so, add the relevant mobs.
+				var baseEnabled = document.getElementById("enableBaseMobsCheckbox").checked;
+				if (baseEnabled) {
+					mobTemplatesInUse = mobTemplatesInUse.concat(baseMobTemplates)
+					addSeperator();
+					addDisabled("Base Mobs")
+					addSeperator();
+					baseMobTemplates.forEach(addToDropdown)
+				}
 				
 				//Check if Soro is permitted. If so, add his mobs.
 				var soroEnabled = document.getElementById("enableSoroMobsCheckbox").checked;
@@ -194,7 +218,16 @@
 					addSeperator();
 					soroMobTemplates.forEach(addToDropdown)
 				}
-			
+				
+				//Check if Galayis' is permitted. If so, his too.
+				var galayisEnabled = document.getElementById("enableGalayisMobsCheckbox").checked;
+				if (galayisEnabled) {
+					mobTemplatesInUse = mobTemplatesInUse.concat(galayisMobTemplates)
+					addSeperator();
+					addDisabled("Galayis's Mobs")
+					addSeperator();
+					galayisMobTemplates.forEach(addToDropdown)
+				}
 			}
 			
 			function rollDice(diceInfo) {
@@ -517,8 +550,10 @@
 				//Now that everything is ready, populate the mob dropdown...
 				populateMobsDropdown();
 				
-				//Bind the buttons...
+				//Bind the inputs...
 				document.getElementById("enableSoroMobsCheckbox").onclick = populateMobsDropdown;
+				document.getElementById("enableBaseMobsCheckbox").onclick = populateMobsDropdown;
+				document.getElementById("enableGalayisMobsCheckbox").onclick = populateMobsDropdown;
 				document.getElementById("diceRollButton").onclick = userRollDice;
 				document.getElementById("generateButton").onclick = createMobInstance;
 				document.getElementById("gristButton").onclick = rollGrist;
