@@ -312,7 +312,7 @@
 						},
 						function (mob) {
 							mob.AC = mob.AC + 2;
-							mob.MaxHP = Math.floor(mob.HP*1.1); //Increases MaxHP by 1.1x
+							mob.MaxHP = Math.floor(mob.MaxHP*1.1); //Increases MaxHP by 1.1x
 							mob.Name = "Shiny " + mob.Name;
 						},
 						function (mob) {
